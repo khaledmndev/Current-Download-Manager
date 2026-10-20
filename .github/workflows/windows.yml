@@ -1,0 +1,43 @@
+name: Windows alpha checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-pc-windows-msvc
+          components: rustfmt
+      - run: npm ci --no-audit --no-fund
+      - run: npm run test:extension
+      - run: npm run build
+      - run: cargo fmt --all -- --check
+      - run: cargo test --locked -p current-core --target x86_64-pc-windows-msvc
+      - run: python scripts/test_publish_tools.py
+      - run: python scripts/check-public.py
+      - name: Build Development Pro alpha
+        run: python scripts/build-rust.py --development-pro
+      - run: python scripts/browser-smoke.py --bin-dir target/x86_64-pc-windows-msvc/release
+      - run: python scripts/generate-notices.py
+      - run: ./scripts/package-portable.ps1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: current-public-alpha-windows-x64
+          path: release/Current-public-alpha-windows-x64.zip
+          if-no-files-found: error

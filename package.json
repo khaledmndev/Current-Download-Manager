@@ -1,0 +1,29 @@
+{
+  "name": "current-download-manager",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:extension": "node --test extensions/tests/policy.test.mjs extensions/tests/worker.test.mjs",
+    "test:browser-host": "python scripts/browser-smoke.py",
+    "dev": "vite --config apps/desktop/vite.config.ts",
+    "build": "tsc --noEmit -p apps/desktop/tsconfig.json && vite build --config apps/desktop/vite.config.ts",
+    "desktop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/desktop-dev.ps1",
+    "package": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build.ps1"
+  },
+  "dependencies": {
+    "@phosphor-icons/react": "^2.1.0",
+    "@tauri-apps/api": "^2.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.8.0",
+    "vite": "^6.0.0"
+  }
+}

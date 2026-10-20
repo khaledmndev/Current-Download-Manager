@@ -1,0 +1,6 @@
+{
+  "identifier": "main-window",
+  "description": "The local Current application window",
+  "windows": ["main"],
+  "permissions": ["core:default", "dialog:allow-open", "dialog:allow-save"]
+}

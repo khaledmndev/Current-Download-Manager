@@ -1,0 +1,20 @@
+[package]
+name = "current-desktop"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+custom-protocol = ["tauri/custom-protocol"]
+
+[dependencies]
+current-core = { path = "../../../crates/current-core" }
+anyhow.workspace = true
+serde_json.workspace = true
+tokio.workspace = true
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-dialog = "2"
+tauri-plugin-single-instance = "2"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }

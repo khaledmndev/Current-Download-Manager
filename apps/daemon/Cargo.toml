@@ -1,0 +1,26 @@
+[package]
+name = "current-daemon"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[features]
+development-pro = ["current-core/development-pro"]
+
+[dependencies]
+current-core = { path = "../../crates/current-core" }
+anyhow.workspace = true
+tokio.workspace = true
+serde_json.workspace = true
+
+[[bin]]
+name = "current-daemon"
+path = "src/main.rs"
+
+[[bin]]
+name = "current-cli"
+path = "src/cli.rs"
+
+[[bin]]
+name = "current-native-host"
+path = "src/native_host.rs"

@@ -1,0 +1,63 @@
+{
+  "manifest_version": 3,
+  "name": "Current Download Manager",
+  "version": "0.4.0",
+  "minimum_chrome_version": "127",
+  "description": "Find files and direct media, manage Current downloads, and safely hand off browser downloads to your local Rust engine.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "contextMenus",
+    "nativeMessaging",
+    "storage",
+    "alarms",
+    "webRequest"
+  ],
+  "optional_permissions": ["downloads"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "host_permissions": [
+    "https://www.youtube.com/*",
+    "https://youtube.com/*",
+    "https://m.youtube.com/*",
+    "https://music.youtube.com/*",
+    "https://youtu.be/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://music.youtube.com/*",
+        "https://youtu.be/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": false
+    }
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "Current Download Manager",
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEApRupDir8A0xZEI/KdbkcXeczcpoGeQSvb7UF8kiSyjVX00PX4FYbrTDAqcsHSsi+9XOvzwcz5Ch5mp88Z97FH6XrttfEB0aRpRC2qduTHqCgrpvk9euYPBevdPAoZPrn58K1NiBaUGMXlp2CdhNBUYA9xL2JbjE3biKlzDzNVUVcZ6Km6T4Wy7O1XfwTsT1Z3vxTBVp1gTEh5+U+rn8tuedby3vc3OYGJlRQ1Rs0e7qk6+yrJEoYz0VZcpm41olMtd5jU3bUm60DoGrSBA2rQsV1F27Kg0olneh/uzgtyfJCtMhoEt1mPI5ZMr3SqV/JB2j5ZuNeBUU+sj42SaRFBwIDAQAB"
+}

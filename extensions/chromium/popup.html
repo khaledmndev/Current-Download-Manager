@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Current Download Manager</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <img src="icons/48.png" width="34" height="34" alt="" />
+      <div><strong>current</strong><span>DOWNLOAD MANAGER</span></div>
+      <button id="open" class="quiet" title="Open desktop application">
+        Open app ↗
+      </button>
+    </header>
+    <section class="connection">
+      <span id="dot" class="dot"></span>
+      <div>
+        <strong id="connection">Checking desktop…</strong
+        ><small id="plan">Your downloads stay on this computer.</small>
+      </div>
+      <button id="retry" class="quiet">Retry</button>
+    </section>
+    <div id="notice" role="status" aria-live="polite" hidden></div>
+    <nav aria-label="Extension views">
+      <button data-view="discover" aria-current="page">
+        Discover <span id="count">0</span></button
+      ><button data-view="transfers">Transfers</button
+      ><button data-view="settings">Settings</button>
+    </nav>
+    <main>
+      <section id="discover" class="view">
+        <section id="youtube-panel" class="youtube-panel" hidden>
+          <strong>YouTube download</strong>
+          <p id="youtube-caption" class="hint">Send this video to Current.</p>
+          <div class="tools">
+            <select id="youtube-mode" aria-label="YouTube output">
+              <option value="video">Video + audio · MP4</option>
+              <option value="mp3">Audio only · MP3</option>
+              <option value="audio">Audio only · M4A</option></select
+            ><select id="youtube-quality" aria-label="Available video quality">
+              <option value="">Checking available qualities...</option>
+            </select>
+          </div>
+          <button id="youtube-download">Download with Current</button>
+        </section>
+        <div class="section-title">
+          <div>
+            <h1>Files on this page</h1>
+            <p id="hostname">Scan the active tab to find links.</p>
+          </div>
+          <button id="scan">Scan page</button>
+        </div>
+        <div class="tools">
+          <input
+            id="search"
+            type="search"
+            placeholder="Filter by name or URL"
+            aria-label="Filter discovered files"
+          /><select id="filter" aria-label="File type">
+            <option value="all">All links</option>
+            <option value="media">Direct media</option>
+            <option value="file">Files</option>
+            <option value="stream">Streams</option>
+          </select>
+        </div>
+        <div class="selection">
+          <label><input type="checkbox" id="select-all" /> Select visible</label
+          ><button id="scan-selected" class="quiet">Scan selection</button
+          ><button id="site" class="quiet">Enable on site</button>
+        </div>
+        <p id="media-note" class="hint" hidden></p>
+        <div id="candidates" class="list">
+          <div class="empty">
+            Find direct file links and media sources.<small
+              >Scan a page, or paste a URL below.</small
+            >
+          </div>
+        </div>
+        <div class="batch">
+          <span id="selected-count">0 selected</span
+          ><label><input type="checkbox" id="later" /> Start paused</label
+          ><button id="send-selected" disabled>Send selected</button>
+        </div>
+        <form id="url-form">
+          <label for="url">Paste a download link</label>
+          <div class="input-row">
+            <input
+              id="url"
+              type="url"
+              required
+              placeholder="https://example.com/file.zip"
+            /><button type="submit">Send</button>
+          </div>
+        </form>
+      </section>
+      <section id="transfers" class="view" hidden>
+        <div class="section-title">
+          <div>
+            <h1>Your downloads</h1>
+            <p>Live status from Current’s Rust engine.</p>
+          </div>
+          <button id="refresh-transfers" class="quiet">Refresh</button>
+        </div>
+        <div id="jobs" class="list"></div>
+        <h2>Browser handoffs</h2>
+        <p class="hint">
+          Chrome’s copy stays paused until Current finishes verification. Failed
+          transfers return to Chrome. Closing Chrome clears handoff tracking;
+          any remaining paused copies can be resumed in Chrome’s Downloads page.
+        </p>
+        <div id="pending"></div>
+        <button id="browser-permission" class="secondary">
+          Enable browser handoff
+        </button>
+        <div id="browser-jobs" class="list"></div>
+      </section>
+      <section id="settings" class="view" hidden>
+        <div class="section-title">
+          <div>
+            <h1>Browser integration</h1>
+            <p>Permissions are requested when you enable a feature.</p>
+          </div>
+        </div>
+        <form id="settings-form">
+          <label class="setting"
+            ><div>
+              <strong>Enable Current</strong
+              ><small>Link menus, scanning and handoff.</small>
+            </div>
+            <input id="enabled" type="checkbox"
+          /></label>
+          <label class="setting"
+            ><div>
+              <strong>Media download button</strong
+              ><small
+                >Direct video/audio only, on scanned or allowed pages.</small
+              >
+            </div>
+            <input id="overlay" type="checkbox"
+          /></label>
+          <label class="setting"
+            ><div>
+              <strong>Automatic browser handoff</strong
+              ><small
+                >Safe files matching your rules. Off by default. Chrome’s copy
+                is retained until Current completes.</small
+              >
+            </div>
+            <input id="auto-capture" type="checkbox"
+          /></label>
+          <label for="extensions">Capture file extensions</label
+          ><input id="extensions" placeholder="zip pdf mp4 mp3" />
+          <label for="min-size">Minimum automatic capture size (MB)</label
+          ><input
+            id="min-size"
+            type="number"
+            min="0"
+            max="1000000"
+            step="0.1"
+          />
+          <label for="excluded">Excluded sites</label
+          ><textarea
+            id="excluded"
+            rows="2"
+            placeholder="example.com&#10;private.example.org"
+          ></textarea>
+          <p class="hint">One hostname per line. Subdomains are included.</p>
+          <button type="submit">Save preferences</button>
+        </form>
+        <details id="setup">
+          <summary>Connect the desktop app</summary>
+          <ol>
+            <li>
+              Keep the extension folder in a permanent location. Open
+              <code>chrome://extensions</code>, enable Developer mode, then
+              choose Load unpacked.
+            </li>
+            <li>
+              Choose the <code>extensions/chromium</code> folder supplied with
+              Current.
+            </li>
+            <li>
+              Run this command once in PowerShell, replacing the path if you
+              moved Current:
+            </li>
+          </ol>
+          <pre id="setup-command"></pre>
+          <button id="copy-command" class="secondary">
+            Copy registration command
+          </button>
+          <p class="hint">
+            This registers only Current’s host for this extension ID. Reload the
+            extension and press Retry. No administrator rights needed.
+          </p>
+        </details>
+        <details>
+          <summary>Site access and limitations</summary>
+          <p class="hint">
+            “Enable on site” grants persistent access to that site. Cross-origin
+            media also needs access to its origin; these grants can be removed
+            in Chrome’s extension settings. Scanning once uses active-tab
+            access.
+          </p>
+          <p class="hint">
+            No cookies, passwords, Authorization headers or POST bodies are
+            copied. Login-only links may fail; use Chrome for those. YouTube
+            uses the extractor and FFmpeg for merging. Other-site HLS/DASH,
+            blob-only playback and protected media are not assembled or
+            decrypted. No analytics or remote service.
+          </p>
+        </details>
+      </section>
+    </main>
+    <footer>
+      <span>LOCAL ENGINE · ORIGINAL INTEGRATION</span><span>v0.4.0</span>
+    </footer>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
